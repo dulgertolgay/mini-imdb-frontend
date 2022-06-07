@@ -40,15 +40,17 @@ const Navigation = () => {
           </Nav>
           {logged ? (
             <Nav>
-              <p
-                style={{
-                  margin: "0",
-                  color: "#ffffff",
-                  padding: "8px",
-                }}
-              >
-                {user.username}
-              </p>
+              {user ? (
+                <p
+                  style={{
+                    margin: "0",
+                    color: "#ffffff",
+                    padding: "8px",
+                  }}
+                >
+                  {user.username}
+                </p>
+              ) : null}
               <Nav.Link
                 href=""
                 onClick={logout}
