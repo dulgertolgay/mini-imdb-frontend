@@ -19,7 +19,7 @@ const Login = () => {
       const res = (
         await axios.get(
           `http://localhost:8080/api?queryString=
-            SELECT mail, password
+            SELECT *
             FROM USER
             WHERE mail='${mail}'`
         )
@@ -27,6 +27,7 @@ const Login = () => {
       let userData = res.data[0];
       if (userData.password === password) {
         dispatch({ type: "login" });
+        dispatch({ type: "setUser", payload: userData });
         navigate("/");
       } else {
         setError(true);

@@ -23,7 +23,17 @@ const Signup = () => {
             INSERT INTO USER(uid, mail, country, username, password) 
             VALUES('${uid}', '${mail}', '${country}', '${username}', '${password}')`
       );
+      const res = (
+        await axios.get(
+          `http://localhost:8080/api?queryString=
+            SELECT *
+            FROM USER
+            WHERE mail='${mail}'`
+        )
+      ).data;
+      let userData = res.data[0];
       dispatch({ type: "login" });
+      dispatch({ type: "setUser", payload: userData });
       navigate("/");
     } catch (err) {
       console.log("err: ", err.message);
