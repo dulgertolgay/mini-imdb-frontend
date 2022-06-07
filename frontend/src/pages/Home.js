@@ -10,10 +10,18 @@ const Home = () => {
   const navigate = useNavigate();
   const logged = useSelector((store) => store.logged);
 
-  const [search, setSearch] = useState("");
   const [movies, setMovies] = useState([]);
   const [filter, setFilter] = useState({
     castName: "",
+    movieName: "",
+  });
+  const [movieData, setMovieData] = useState({
+    id: "",
+    name: "",
+    language: "",
+    budget: 0,
+    revenue: 0,
+    year: 0,
   });
 
   useEffect(() => {
@@ -21,27 +29,28 @@ const Home = () => {
     if (!logged) {
       navigate("/login");
     }
-    const fetchData = async () => {
-      try {
-        const res = (
-          await axios.get(
-            `http://localhost:8080/api?queryString=
-            SELECT name, year, revenue 
-			      FROM MOVIE 
-			      ORDER BY revenue DESC 
-			      LIMIT 300`
-          )
-        ).data;
-        let movieData = res.data;
-        setMovies(movieData);
-      } catch (err) {
-        console.log("err: ", err.message);
-      }
-    };
-
     // call the function
     fetchData();
   }, [logged, navigate]);
+
+  const fetchData = async () => {
+    try {
+      const res = (
+        await axios.get(
+          `http://localhost:8080/api?queryString=
+          SELECT movie.name, movie.year, movie.revenue, rates.rating
+          FROM movie, rates
+          WHERE movie.id = rates.mid 
+          ORDER BY rates.rating DESC 
+          LIMIT 300`
+        )
+      ).data;
+      let movieData = res.data;
+      setMovies(movieData);
+    } catch (err) {
+      console.log("err: ", err.message);
+    }
+  };
 
   const handleFilter = async () => {
     try {
@@ -60,13 +69,31 @@ const Home = () => {
           )
         ).data;
         movieData = res.data;
-      } else {
+      }
+      if (filter.movieName) {
         const res = (
           await axios.get(
             `http://localhost:8080/api?queryString=
             SELECT *
-			      FROM movie 
-			      ORDER BY revenue DESC 
+            FROM movie
+            WHERE movie.name = '${filter.movieName}'
+            `
+          )
+        ).data;
+        movieData = movieData
+          ? movieData.filter((movie) =>
+              res.data.map((x) => x.id).includes(movie.id)
+            )
+          : res.data;
+      }
+      if (!filter.castName && !filter.movieName) {
+        const res = (
+          await axios.get(
+            `http://localhost:8080/api?queryString=
+            SELECT movie.name, movie.year, movie.revenue, rates.rating
+			      FROM movie, rates
+            WHERE movie.id = rates.mid 
+			      ORDER BY rates.rating DESC 
 			      LIMIT 300`
           )
         ).data;
@@ -78,25 +105,134 @@ const Home = () => {
     }
   };
 
+  const handleAdd = async () => {
+    try {
+      let randomInt = Math.floor(Math.random() * 100000000);
+      setMovieData((prevState) => ({
+        ...prevState,
+        id: "tt" + randomInt,
+      }));
+
+      const res = (
+        await axios.get(
+          `http://localhost:8080/api?queryString=
+            INSERT INTO MOVIE(id, name, language, budget, revenue, year)
+            VALUES('${movieData.id}', '${movieData.name}', '${movieData.language}', ${movieData.budget}, ${movieData.revenue}, ${movieData.year});
+            `
+        )
+      ).data;
+      fetchData();
+    } catch (err) {
+      console.log("err: ", err.message);
+    }
+  };
+
   return (
     <div id="home">
       <Navigation />
       <div className="content">
-        <div className="card">
-          <Form.Group className="mb-3">
-            <Form.Label>Cast Name</Form.Label>
-            <Form.Control
-              placeholder="Enter a cast name"
-              onChange={(e) => {
-                setFilter({ castName: e.target.value });
-              }}
-            />
-            <Form.Text className="text-muted">Select cast's movies</Form.Text>
-          </Form.Group>
-          <Button variant="primary" type="submit" onClick={handleFilter}>
-            Filter
-          </Button>
+        <div className="flex-col">
+          <div className="card">
+            <Form.Group className="mb-3">
+              <Form.Label>Cast Name</Form.Label>
+              <Form.Control
+                placeholder="Enter a cast name"
+                onChange={(e) => {
+                  setFilter((prevState) => ({
+                    ...prevState,
+                    castName: e.target.value,
+                  }));
+                }}
+              />
+              <Form.Text className="text-muted">Select cast's movies</Form.Text>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Movie Name</Form.Label>
+              <Form.Control
+                placeholder="Enter a movie name"
+                onChange={(e) => {
+                  setFilter((prevState) => ({
+                    ...prevState,
+                    movieName: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit" onClick={handleFilter}>
+              Filter
+            </Button>
+          </div>
+          <div className="card">
+            <p>Add a Movie</p>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                placeholder="Name"
+                onChange={(e) => {
+                  setMovieData((prevState) => ({
+                    ...prevState,
+                    name: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Language</Form.Label>
+              <Form.Control
+                placeholder="EN"
+                onChange={(e) => {
+                  setMovieData((prevState) => ({
+                    ...prevState,
+                    language: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Budget</Form.Label>
+              <Form.Control
+                placeholder="Budget"
+                type="number"
+                onChange={(e) => {
+                  setMovieData((prevState) => ({
+                    ...prevState,
+                    budget: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Revenue</Form.Label>
+              <Form.Control
+                placeholder="Revenue"
+                type="number"
+                onChange={(e) => {
+                  setMovieData((prevState) => ({
+                    ...prevState,
+                    revenue: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Year</Form.Label>
+              <Form.Control
+                placeholder="Year"
+                type="number"
+                onChange={(e) => {
+                  setMovieData((prevState) => ({
+                    ...prevState,
+                    year: e.target.value,
+                  }));
+                }}
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit" onClick={handleAdd}>
+              Add Movie
+            </Button>
+          </div>
         </div>
+
         <div className="movie-list">
           <h1 className="title">Top Movies</h1>
           <Table striped>
@@ -115,7 +251,7 @@ const Home = () => {
                       <td>{movie.name}</td>
                       <td>{movie.year}</td>
                       <td>${parseInt(movie.revenue)}</td>
-                      <td>9.2</td>
+                      <td>{movie.rating}</td>
                     </tr>
                   ))
                 : null}

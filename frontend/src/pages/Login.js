@@ -38,7 +38,7 @@ const Login = () => {
 
   return (
     <div id="login">
-      <div className="card">
+      <div className="card" style={{ width: "50%" }}>
         <Form.Group className="mb-3">
           <Form.Label>Email Address</Form.Label>
           <Form.Control
