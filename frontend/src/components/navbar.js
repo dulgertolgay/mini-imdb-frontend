@@ -19,15 +19,6 @@ const Navigation = () => {
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
       <Container>
-        <Navbar.Brand>
-          <img
-            height={50}
-            width={50}
-            alt="logo"
-            style={{ borderRadius: "25px" }}
-            src={require("../assets/arda.jpeg")}
-          />
-        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse
           id="basic-navbar-nav"
@@ -41,15 +32,24 @@ const Navigation = () => {
           {logged ? (
             <Nav>
               {user ? (
-                <p
-                  style={{
-                    margin: "0",
-                    color: "#ffffff",
-                    padding: "8px",
-                  }}
-                >
-                  {user.username}
-                </p>
+                <div className="flex-row">
+                  <p
+                    style={{
+                      margin: "0",
+                      color: "#ffffff",
+                      padding: "8px",
+                    }}
+                  >
+                    {user.username}
+                  </p>
+                  <img
+                    height={30}
+                    width={30}
+                    alt="logo"
+                    style={{ borderRadius: "15px", marginLeft: "10px" }}
+                    src={require("../assets/pp-default.jpeg")}
+                  />
+                </div>
               ) : null}
               <Nav.Link
                 href=""
