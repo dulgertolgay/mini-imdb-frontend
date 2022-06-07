@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-// import "../styles/Home.scss";
 import { Table, Button, Form } from "react-bootstrap";
 import Navigation from "../components/navbar";
 import { useSelector } from "react-redux";
@@ -68,9 +67,8 @@ const Users = () => {
 		if (filter) {
 			let filteredUsers = users;
 			if (filter.username !== "") {
-				filteredUsers = filteredUsers.filter(
-					(user) => user.username.includes(filter.username)
-					// user.username === filter.username
+				filteredUsers = filteredUsers.filter((user) =>
+					user.username.includes(filter.username)
 				);
 			}
 			if (filter.interactionAmount !== 0) {
