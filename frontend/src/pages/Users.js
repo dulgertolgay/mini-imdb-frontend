@@ -10,10 +10,14 @@ const Users = () => {
 	const navigate = useNavigate();
 	const logged = useSelector((store) => store.logged);
 
-	const [search, setSearch] = useState("");
+	const [inputs, setInputs] = useState({
+		username: "",
+		interactionAmount: 0,
+	});
 	const [users, setUsers] = useState([]);
 	const [filter, setFilter] = useState({
 		username: "",
+		interactionAmount: 0,
 	});
 
 	useEffect(() => {
@@ -35,7 +39,6 @@ const Users = () => {
 				).data;
 				let userData = res.data;
 				setUsers(userData);
-				// setFilteredUsers(userData);
 				console.log("recieved user data: ", userData);
 			} catch (err) {
 				console.log("err: ", err.message);
@@ -48,8 +51,39 @@ const Users = () => {
 
 	const handleFilter = async () => {
 		setFilter({
-			username: search,
+			...inputs,
 		});
+	};
+
+	const renderUsers = () => {
+		const filteredUsers = filterUsers();
+		return filteredUsers.map((user, i) => (
+			<tr key={i}>
+				<td>{user.username}</td>
+				<td>{user.interactionCount}</td>
+			</tr>
+		));
+	};
+
+	const filterUsers = () => {
+		if (filter) {
+			let filteredUsers = users;
+			console.log("users: ", users);
+			console.log("filter:", filter);
+			if (filter.username !== "") {
+				filteredUsers = filteredUsers.filter(
+					(user) => user.username.includes(filter.username)
+					// user.username === filter.username
+				);
+			}
+			if (filter.interactionAmount !== 0) {
+				filteredUsers = filteredUsers.filter(
+					(user) => user.interactionCount >= filter.interactionAmount
+				);
+			}
+			return filteredUsers;
+		}
+		return users;
 	};
 
 	return (
@@ -62,7 +96,14 @@ const Users = () => {
 						<Form.Control
 							placeholder="Enter a user name"
 							onChange={(e) => {
-								setSearch(e.target.value);
+								setInputs({ ...inputs, username: e.target.value });
+							}}
+						/>
+						<Form.Label>Min Interaction Amount</Form.Label>
+						<Form.Control
+							placeholder="Enter min interaction amount"
+							onChange={(e) => {
+								setInputs({ ...inputs, interactionAmount: e.target.value });
 							}}
 						/>
 					</Form.Group>
@@ -79,25 +120,7 @@ const Users = () => {
 								<th>Interaction Count</th>
 							</tr>
 						</thead>
-						<tbody>
-							{users.length !== 0
-								? filter.username
-									? users
-											.filter((user) => user.username === filter.username)
-											.map((user, i) => (
-												<tr key={i}>
-													<td>{user.username}</td>
-													<td>{user.interactionCount}</td>
-												</tr>
-											))
-									: users.map((user, i) => (
-											<tr key={i}>
-												<td>{user.username}</td>
-												<td>{user.interactionCount}</td>
-											</tr>
-									  ))
-								: null}
-						</tbody>
+						<tbody>{renderUsers()}</tbody>
 					</Table>
 				</div>
 			</div>
