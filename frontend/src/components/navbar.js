@@ -30,7 +30,7 @@ const Navigation = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav>
             <Link to="/">Movies</Link>
-            <Link to="/casts">Casts</Link>
+            <Link to="/casts">Casts & Crews</Link>
           </Nav>
           <Form className="d-flex">
             <FormControl

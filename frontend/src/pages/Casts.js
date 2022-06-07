@@ -15,11 +15,11 @@ const Casts = () => {
     castName: "",
   });
 
-  const getAllCastsQuery = `http://localhost:8080/api?queryString=
-  SELECT CC.fullName, CC.birthYear, CC.deathYear 
-  FROM MOVIE AS M, CREW_CAST AS CC, PLAYS_IN AS PI 
-  WHERE PI.mid = M.id and PI.cast_id = CC.id
-  LIMIT 300`;
+  const getAllCastsAndCrewsQuery = `http://localhost:8080/api?queryString=
+    SELECT CREW_CAST.fullName, CREW_CAST.birthYear, CREW_CAST.deathYear 
+    FROM CAST, CREW, CREW_CAST
+    WHERE CAST.id = CREW_CAST.id or CREW.id = CREW_CAST.id
+    LIMIT 300`;
 
   const getBestCastsQuery = `http://localhost:8080/api?queryString=
   SELECT crew_cast.fullName, crew_cast.birthYear, crew_cast.deathYear, avg(rates.rating) as avgRatingOfCast
@@ -47,33 +47,42 @@ const Casts = () => {
   ORDER BY avgRatingOfProducer DESC;
   `;
 
+  const getAliveCastsWithMoviesQuery = `http://localhost:8080/api?queryString=
+    SELECT crew_cast.fullName, crew_cast.birthYear, crew_cast.deathYear
+    FROM cast, crew_cast, plays_in
+    WHERE cast.id = crew_cast.id AND plays_in.cast_id = cast.id AND crew_cast.deathYear IS NULL 
+    GROUP BY cast.id
+    HAVING count(*) > ${filter.minNumberOfMovies}; 
+  `;
+
+  const getCrewWithRoleQuery = `http://localhost:8080/api?queryString=
+    SELECT DISTINCT crew_cast.fullName, crew_cast.birthYear, crew_cast.deathYear, works_in.role
+    FROM crew, crew_cast, works_in
+    WHERE crew.id = crew_cast.id AND works_in.crew_id = crew.id AND works_in.role = '${filter.role}'
+  `;
+
   useEffect(() => {
     // declare the data fetching function
     if (!logged) {
       navigate("/login");
     }
-    executeQuery(getAllCastsQuery);
+    executeQuery(getAllCastsAndCrewsQuery);
   }, []);
 
   const handleFilter = async () => {
-    let castsMovies;
+    let castData = [];
+    let crewData = [];
     try {
-      if (filter.castName) {
-        const res = (
-          await axios.get(
-            `http://localhost:8080/api?queryString=
-            SELECT *
-            FROM movie
-            WHERE movie.id IN ( 
-	            SELECT mid
-	            FROM cast, plays_in, crew_cast
-	            WHERE plays_in.cast_id = cast.id AND crew_cast.id = cast.id AND crew_cast.fullName = '${filter.castName}');
-            `
-          )
-        ).data;
-        castsMovies = res.data;
+      if (filter.minNumberOfMovies) {
+        const res = (await axios.get(getAliveCastsWithMoviesQuery)).data;
+        castData = res.data;
       }
-      setCasts(castsMovies);
+      if (filter.role) {
+        const res = (await axios.get(getCrewWithRoleQuery)).data;
+        crewData = res.data;
+      }
+
+      setCasts([...castData, ...crewData]);
     } catch (err) {
       console.log("err: ", err.message);
     }
@@ -96,14 +105,29 @@ const Casts = () => {
       <div className="content">
         <div className="card">
           <Form.Group className="mb-3">
-            <Form.Label>Cast Name</Form.Label>
+            <Form.Label>Role</Form.Label>
             <Form.Control
-              placeholder="Enter a cast name"
+              placeholder="Enter a role"
               onChange={(e) => {
-                setFilter({ castName: e.target.value });
+                setFilter({ role: e.target.value });
               }}
             />
-            <Form.Text className="text-muted">Select cast's movies</Form.Text>
+            <Form.Text className="text-muted">
+              Enter role of the cast or crew
+            </Form.Text>
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Min Number of Movies</Form.Label>
+            <Form.Control
+              placeholder="Min number of movies"
+              onChange={(e) => {
+                setFilter({ minNumberOfMovies: e.target.value });
+              }}
+            />
+            <Form.Text className="text-muted">
+              List the casts or crews that worked in more movies than the
+              entered number
+            </Form.Text>
           </Form.Group>
           <Button variant="primary" type="submit" onClick={handleFilter}>
             Filter
@@ -111,7 +135,7 @@ const Casts = () => {
         </div>
         <div className="movie-list">
           <div className="flex-row">
-            <h1 className="title">Casts</h1>
+            <h1 className="title">Casts & Crews</h1>
             <div className="button-div">
               <Button
                 variant="primary"
@@ -141,6 +165,7 @@ const Casts = () => {
                 {casts.length > 0 && casts[0].avgRatingOfProducer ? (
                   <th>Average Rating</th>
                 ) : null}
+                {casts.length > 0 && casts[0].role ? <th>Role</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -156,6 +181,7 @@ const Casts = () => {
                       {cast.avgRatingOfProducer ? (
                         <td>{Number(cast.avgRatingOfProducer).toFixed(1)}</td>
                       ) : null}
+                      {cast.role ? <td>{cast.role}</td> : null}
                     </tr>
                   ))
                 : null}
