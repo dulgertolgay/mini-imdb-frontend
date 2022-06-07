@@ -1,8 +1,19 @@
 import React from "react";
 import { Navbar, Nav, Container, Form, FormControl } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const Navigation = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const logged = useSelector((store) => store.logged);
+
+  const logout = () => {
+    dispatch({ type: "logout" });
+    navigate("/login");
+  };
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
       <Container>
@@ -18,8 +29,8 @@ const Navigation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav>
-            <Link to="/">Home</Link>
-            <Link to="/movies">Movies</Link>
+            <Link to="/">Movies</Link>
+            <Link to="/casts">Casts</Link>
           </Nav>
           <Form className="d-flex">
             <FormControl
@@ -29,6 +40,22 @@ const Navigation = () => {
               aria-label="Search"
             />
           </Form>
+          {logged ? (
+            <Nav>
+              <Nav.Link
+                href=""
+                onClick={logout}
+                style={{ color: "#ffffff", marginLeft: "50px" }}
+              >
+                Logout
+              </Nav.Link>
+            </Nav>
+          ) : (
+            <Nav>
+              <Link to="/login">Log In</Link>
+              <Link to="/signup">Sign Up</Link>
+            </Nav>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

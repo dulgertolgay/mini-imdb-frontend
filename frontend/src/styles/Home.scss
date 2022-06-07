@@ -1,31 +1,57 @@
-#home {
+#home, #casts {
     background-color: #CBCBC6;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    .movie-list {
-        background-color: #F8F8F8;
-        width: 70%;
-        padding: 50px 20px;
-        border-radius: 0;
+    .content {
+        display: flex;
+        padding: 50px;
 
-        h1 {
-            margin-bottom: 25px;
-            font-size: 27px;
+        .card {
+            margin-right: 50px;
+            width: 25%;
         }
 
-        tr {
-            background-color: #f6f6f5;
-            border: #fff 1px solid;
-            height: 60px;
-            &:nth-child(even) {
-                background-color: #fbfbfb;
+        .movie-list {
+            background-color: #F8F8F8;
+            width: 1000px;
+            padding: 50px 20px;
+            border-radius: 15px;
+            
+            .flex-row {
+                display: flex;
+                justify-content: space-between;
+
+                h1 {
+                    margin-bottom: 25px;
+                    font-size: 27px;
+                }
+
+                .button-div {
+                    display: flex;
+                    flex-direction: column;
+
+                    .btn-primary {
+                        margin-bottom: 10px;
+                    }
+                }
             }
-            td {
-               vertical-align: middle;
+
+            tr {
+                background-color: #f6f6f5;
+                border: #fff 1px solid;
+                height: 60px;
+                &:nth-child(even) {
+                    background-color: #fbfbfb;
+                }
+                td {
+                   vertical-align: middle;
+                }
             }
         }
     }
+    
 }
