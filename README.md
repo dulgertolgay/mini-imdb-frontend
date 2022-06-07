@@ -2,6 +2,17 @@
 
 COMP 306 Term Project Frontend and Backend
 
+# To run the app please follow the steps below:
+
+1. Navigate into frontend and backend folders from different terminals
+2. In backend/index.js please fill the database connection information according to your local setup
+3. In both folder run:
+4. ### `npm i` or `npm install`
+5. In both folder run: 
+6. ### `npm start`
+7. DO NOT FORGET TO RUN MYSQL ON YOUR COMPUTER!
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
