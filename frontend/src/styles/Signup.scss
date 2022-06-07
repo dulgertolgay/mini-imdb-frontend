@@ -1,0 +1,22 @@
+#signup {
+    background-color: #CBCBC6;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 50px;
+
+    .btn-primary {
+        width: 100px;
+        height: 40px;
+        background-color: #08705B;
+        border: none;
+    }
+    .green-text {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #08705B;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+}

@@ -1,6 +1,6 @@
 # mini-imdb-frontend
 
-COMP 306 Term Project Frontend
+COMP 306 Term Project Frontend and Backend
 
 # Getting Started with Create React App
 

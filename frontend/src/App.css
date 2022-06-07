@@ -56,6 +56,14 @@
   
 }
 
+.card {
+  width: 50%;
+  height: fit-content;
+  border-radius: 15px !important;
+  padding: 30px;
+  background-color: #ffffff;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
