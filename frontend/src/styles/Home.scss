@@ -8,16 +8,18 @@
 
     .content {
         display: flex;
+        justify-content: space-between;
         padding: 50px;
-
-        .card {
-            margin-right: 50px;
-            width: 25%;
+        width: 100%;
+        
+        .flex-col {
+            display: flex;
+            flex-direction: column;
         }
 
         .movie-list {
             background-color: #F8F8F8;
-            width: 1000px;
+            width: 70%;
             padding: 50px 20px;
             border-radius: 15px;
             

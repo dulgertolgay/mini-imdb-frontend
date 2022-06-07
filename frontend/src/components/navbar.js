@@ -27,19 +27,14 @@ const Navigation = () => {
           />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse
+          id="basic-navbar-nav"
+          style={{ justifyContent: "space-between" }}
+        >
           <Nav>
             <Link to="/">Movies</Link>
             <Link to="/casts">Casts & Crews</Link>
           </Nav>
-          <Form className="d-flex">
-            <FormControl
-              type="search"
-              placeholder="Search"
-              className="search-input"
-              aria-label="Search"
-            />
-          </Form>
           {logged ? (
             <Nav>
               <Nav.Link
