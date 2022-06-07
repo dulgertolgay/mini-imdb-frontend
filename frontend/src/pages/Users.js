@@ -39,7 +39,6 @@ const Users = () => {
 				).data;
 				let userData = res.data;
 				setUsers(userData);
-				console.log("recieved user data: ", userData);
 			} catch (err) {
 				console.log("err: ", err.message);
 			}
@@ -68,8 +67,6 @@ const Users = () => {
 	const filterUsers = () => {
 		if (filter) {
 			let filteredUsers = users;
-			console.log("users: ", users);
-			console.log("filter:", filter);
 			if (filter.username !== "") {
 				filteredUsers = filteredUsers.filter(
 					(user) => user.username.includes(filter.username)
