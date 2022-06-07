@@ -103,7 +103,7 @@ const Casts = () => {
     <div id="casts">
       <Navigation />
       <div className="content">
-        <div className="card">
+        <div className="card" style={{ width: "30%" }}>
           <Form.Group className="mb-3">
             <Form.Label>Role</Form.Label>
             <Form.Control
